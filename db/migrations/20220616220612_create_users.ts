@@ -10,8 +10,8 @@ export default class extends AbstractMigration<ClientPostgreSQL> {
     const statement = `
     CREATE TABLE users (
         id serial PRIMARY KEY,
-        nickname varchar(255),
-        email varchar(255),
+        nickname varchar(255) UNIQUE,
+        email varchar(255) UNIQUE,
         password varchar
     )`;
 
