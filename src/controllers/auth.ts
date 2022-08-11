@@ -67,7 +67,20 @@ export const login = async (ctx: RouterContext<"/login">) => {
 };
 
 export const authUser = (ctx: RouterContext<"/auth/user">) => {
-  const user_output = ctx.state.user.output();
+  const user_output: User = ctx.state.user.output();
   ctx.response.status = 200;
   ctx.response.body = response({ user: user_output });
+};
+
+export const setAccess = async (ctx: RouterContext<"/auth/user/access">) => {
+  const user: User = ctx.state.user.output();
+
+  const err = await user.setAccess();
+  if (err) {
+    ctx.response.status = 500;
+    ctx.response.body = error("Something went wrong");
+    return;
+  }
+  ctx.response.status = 200;
+  ctx.response.body = response();
 };

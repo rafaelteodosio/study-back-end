@@ -6,12 +6,15 @@ import {
   verify,
 } from "https://deno.land/x/djwt@v2.7/mod.ts";
 import { secret } from "../settings.ts";
+import UserInvestment from "./userInvestment.ts";
 
 interface IUser {
   id: number;
   nickname: string;
   email: string;
   password?: string;
+  first_access: boolean;
+  balance: number;
 }
 
 class User implements IUser {
@@ -19,12 +22,16 @@ class User implements IUser {
   nickname: string;
   email: string;
   password?: string;
+  first_access: boolean;
+  balance: number;
 
   constructor(user: IUser) {
     this.id = user.id;
     this.nickname = user.nickname;
     this.email = user.email;
     this.password = user.password;
+    this.first_access = user.first_access;
+    this.balance = user.balance;
   }
 
   output() {
@@ -32,6 +39,8 @@ class User implements IUser {
       id: this.id,
       nickname: this.nickname,
       email: this.email,
+      first_access: this.first_access,
+      balance: this.balance,
     });
     return user;
   }
@@ -51,6 +60,36 @@ class User implements IUser {
     );
 
     return token;
+  }
+
+  async setAccess(): Promise<Error | null> {
+    const id = this.id;
+    try {
+      await client.queryArray(
+        "UPDATE users SET first_access = false WHERE id = $ID",
+        { id },
+      );
+      return null;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async makeInvestment(
+    investment_id: number,
+    value: number,
+  ): Promise<Error | null> {
+    if (this.balance < value) {
+      return new Error("Insufficient balance");
+    }
+
+    const err = await UserInvestment.createUserInvestment(
+      this.id,
+      investment_id,
+      value,
+    );
+
+    return err;
   }
 
   static async validateJWT(
@@ -95,7 +134,7 @@ class User implements IUser {
   ): Promise<[User | null, Error | null]> {
     try {
       const { rows } = await client.queryObject<IUser>(
-        "SELECT id, nickname, email, password FROM users WHERE id = $ID",
+        "SELECT id, nickname, email, password, first_access, balance FROM users WHERE id = $ID",
         { id },
       );
 
@@ -116,7 +155,7 @@ class User implements IUser {
   ): Promise<[User | null, Error | null]> {
     try {
       const { rows } = await client.queryObject<IUser>(
-        "SELECT id, nickname, email, password FROM users WHERE email = $EMAIL",
+        "SELECT id, nickname, email, password, first_access, balance FROM users WHERE email = $EMAIL",
         { email },
       );
 
