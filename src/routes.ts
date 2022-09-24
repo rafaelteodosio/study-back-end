@@ -1,7 +1,12 @@
 import { Router } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 import { authUser, login, setAccess, signup } from "./controllers/auth.ts";
 import { getModule, listModules } from "./controllers/module.ts";
-import { getQuest, listQuests } from "./controllers/quest.ts";
+import {
+  completeQuest,
+  getQuest,
+  listCompleteQuests,
+  listQuests,
+} from "./controllers/quest.ts";
 import { getQuestion, listQuestions } from "./controllers/question.ts";
 import { getInvestment, listInvestments } from "./controllers/investment.ts";
 import {
@@ -25,7 +30,9 @@ router.get("/module", listModules);
 router.get("/module/:id", getModule);
 
 router.get("/quest", listQuests);
+router.get("/quest/complete", listCompleteQuests);
 router.get("/quest/:id", getQuest);
+router.put("/quest/:id/complete", completeQuest);
 
 router.get("/question", listQuestions);
 router.get("/question/:id", getQuestion);

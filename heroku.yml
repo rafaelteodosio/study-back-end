@@ -1,0 +1,8 @@
+build:
+  docker:
+    release:
+      dockerfile: Dockerfile
+      target: release
+    web:
+      dockerfile: Dockerfile
+      target: main

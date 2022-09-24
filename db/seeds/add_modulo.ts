@@ -15,10 +15,10 @@ export default class extends AbstractSeed<ClientPostgreSQL> {
     );
 
     await this.client.queryArray(
-      `INSERT INTO quest (id, quest_number, name, summary, module_id)
+      `INSERT INTO quest (id, quest_number, name, summary, module_id, reward)
        VALUES 
-            (1, 1, 'Taxa SELIC', 'Básico sobre a Taxa SELIC', 1),
-            (2, 1, 'Ações', 'Básico sobre ações', 2)`,
+            (1, 1, 'Taxa SELIC', 'Básico sobre a Taxa SELIC', 1, 20),
+            (2, 1, 'Ações', 'Básico sobre ações', 2, 25)`,
     );
 
     await this.client.queryArray(

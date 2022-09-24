@@ -3,8 +3,9 @@ import client from "./src/db.ts";
 import router from "./src/routes.ts";
 
 const app = new Application();
+const port = Number(Deno.env.get("PORT") || "5000");
 
 app.use(router.routes());
 
 await client.connect();
-await app.listen({ port: 5000 });
+await app.listen({ port });

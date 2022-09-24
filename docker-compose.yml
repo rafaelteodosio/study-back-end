@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  api:
+    env_file:
+      - .env
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
   db:
     image: postgres
     environment:
